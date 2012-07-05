@@ -850,7 +850,8 @@ class ColumnFamily(object):
                   column_finish="", column_reversed=False, column_count=100,
                   row_count=None, include_timestamp=False,
                   super_column=None, read_consistency_level=None,
-                  buffer_size=None, filter_empty=True):
+                  buffer_size=None, filter_empty=True,
+                  start_token=None, end_token=None):
         """
         Get an iterator over rows in a specified key range.
 
@@ -901,7 +902,8 @@ class ColumnFamily(object):
                 else:
                     buffer_size = min(row_count - count + 1, buffer_size)
 
-            key_range = KeyRange(start_key=last_key, end_key=finish, count=buffer_size)
+            key_range = KeyRange(start_key=last_key, end_key=finish,
+                                 start_token=start_token, end_token=end_token, count=buffer_size)
             key_slices = self.pool.execute('get_range_slices', cp, sp, key_range, cl)
             # This may happen if nothing was ever inserted
             if key_slices is None:
